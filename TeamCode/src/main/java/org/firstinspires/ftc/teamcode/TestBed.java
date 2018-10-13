@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSystem;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.MechenumDrive;
 
 @TeleOp(name = "TestOp")
@@ -13,6 +14,7 @@ public class TestBed extends LinearOpMode {
 
     MechenumDrive Drive = new MechenumDrive();
     ArmSystem Arm = new ArmSystem();
+    ClawSystem Claw = new ClawSystem();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -29,7 +31,8 @@ public class TestBed extends LinearOpMode {
                 hardwareMap.servo.get("C_Right")};
 
         Drive.Initialize(init_drive);
-        Arm.Initialize(init_Arm, init_Extend, init_Claw);
+        Arm.Initialize(init_Arm, init_Extend);
+        Claw.Initilize(init_Claw);
 
         waitForStart();
 
@@ -37,6 +40,7 @@ public class TestBed extends LinearOpMode {
             Drive.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             Arm.ArmLiftPow(gamepad2.left_stick_y);
             Arm.ExtendArmPow(gamepad2.right_stick_y);
+            Claw.ClawPos(gamepad2.a);
             idle();
         }
     }
