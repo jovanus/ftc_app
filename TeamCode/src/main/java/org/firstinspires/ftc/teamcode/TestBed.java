@@ -20,7 +20,6 @@ public class TestBed extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         final DcMotor init_drive[] ={hardwareMap.dcMotor.get("D_FL"),
                 hardwareMap.dcMotor.get("D_FR"),
-                hardwareMap.dcMotor.get("D_FL"),
                 hardwareMap.dcMotor.get("D_RL"),
                 hardwareMap.dcMotor.get("D_RR")};
         final DcMotor init_Arm[] = {hardwareMap.dcMotor.get("A_Left"),
@@ -37,10 +36,13 @@ public class TestBed extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()){
-            Drive.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            double Power[] = Drive.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            telemetry.addLine("Power").addData("FL",Power[0]).addData("FR",Power[1])
+                    .addData("RL",Power[2]).addData("RR",Power[3]);
             Arm.ArmLiftPow(gamepad2.left_stick_y);
             Arm.ExtendArmPow(gamepad2.right_stick_y);
             Claw.ClawPos(gamepad2.a);
+            telemetry.update();
             idle();
         }
     }

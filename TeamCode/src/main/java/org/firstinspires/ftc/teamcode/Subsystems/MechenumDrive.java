@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 import com.sun.tools.javac.util.ArrayUtils;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -15,11 +17,6 @@ public class MechenumDrive {
     DcMotor DriveM[];
     private final double OUTPUT_SCALE_FACTOR = 1.0;
 
-    private void SetupMotors(){
-        DriveM[1].setDirection(DcMotorSimple.Direction.REVERSE);
-        DriveM[3].setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-
 
     /******************************************
      * Initialize with a motor array
@@ -27,14 +24,7 @@ public class MechenumDrive {
      */
     public void Initialize(DcMotor[] Motors){
         DriveM = Motors;
-        SetupMotors();
-    }
-    public void Initialize(DcMotor FrontLeft, DcMotor FrontRight, DcMotor RearLeft, DcMotor RearRight){
-        DriveM[0] = FrontLeft;
-        DriveM[1] = FrontRight;
-        DriveM[2] = RearLeft;
-        DriveM[3] = RearRight;
-        SetupMotors();
+        DriveM[2].setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /*PROTOTYPE
@@ -43,25 +33,25 @@ public class MechenumDrive {
     }
     */
 
-    public void Drive(double ForwardPower, double LateralPower, double RotationalPower){
+    public double[] Drive(double ForwardPower, double LateralPower, double RotationalPower){
         double x = deadzone(LateralPower);
-        double y = deadzone(ForwardPower);
+        double y = -deadzone(ForwardPower);
         double r = deadzone(RotationalPower);
 
-        double wheelSpeeds[] = {x + y + r, -x + y - r, -x + y + r, x + y - r};
+        double wheelSpeeds[] = {y + x + r, y - x - r, y - x + r, y + x - r};
 
         normalize(wheelSpeeds);
         scale(wheelSpeeds, OUTPUT_SCALE_FACTOR);
 
-        int i = 0;
-        for (DcMotor t :
-                DriveM) {
-            t.setPower(Range.clip(wheelSpeeds[i],-1,1));
+        for (int i = 0; i < 4; i++) {
+            DriveM[i].setPower(Range.clip(wheelSpeeds[i],-1,1));
         }
+
+        return wheelSpeeds;
     }
 
     private double deadzone(double power) {
-        return Math.abs(power) > 0.3 ? power : 0.0 ;
+        return Math.abs(power) > 0.2 ? power : 0.0 ;
     }
 
     private static void scale(double wheelSpeeds[], double scaleFactor) {
