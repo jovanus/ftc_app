@@ -16,15 +16,30 @@ public class ColorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        final ColorSensor CS[] = {hardwareMap.get(ColorSensor.class, "CSLeft"),
-                hardwareMap.get(ColorSensor.class, "CSCent"),
-                hardwareMap.get(ColorSensor.class, "CSRight")};
+        ColorSensor CS[] = new ColorSensor[3];
 
-        final DistanceSensor DS[] = {hardwareMap.get(DistanceSensor.class, "CSLeft"),
-                hardwareMap.get(DistanceSensor.class, "CSCent"),
-                hardwareMap.get(DistanceSensor.class, "CSRight")};
+        CS[0] = hardwareMap.get(ColorSensor.class, "CSLeft");
+        CS[1] = hardwareMap.get(ColorSensor.class, "CSCent");
+        CS[2] = hardwareMap.get(ColorSensor.class, "CSRight");
+
+        DistanceSensor DS[] = new DistanceSensor[3];
+        DS[0] = hardwareMap.get(DistanceSensor.class, "CSLeft");
+        DS[1] = hardwareMap.get(DistanceSensor.class, "CSCent");
+        DS[2] = hardwareMap.get(DistanceSensor.class, "CSRight");
+
+        telemetry.addLine("CS Null?").addData("CS1",CS[0] == null)
+                .addData("CS2",CS[1] == null)
+                .addData("CS3", CS[2] == null);
+        telemetry.addLine("DS Null?")
+                .addData("DS1",DS[0] == null)
+                .addData("DS2",DS[1] == null)
+                .addData("DS3",DS[2] == null);
+        telemetry.update();
+
+        sleep(5000);
 
         ClawS.Initialize(DS, CS);
+
 
         waitForStart();
 
