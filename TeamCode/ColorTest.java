@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.teamcode.Subsystems.*;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawSensors;
 
 @TeleOp(name = "Color Test")
 
@@ -42,9 +42,8 @@ public class ColorTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()){
-            //float HSVArray[][] = ClawS.getHSV();
-            //double DistArray[] = ClawS.getDist();
-            /*
+            float HSVArray[][] = ClawS.getHSV();
+            double DistArray[] = ClawS.getDist();
             for (int i = 0; i < 3; i++) {
                 telemetry.addLine()
                         .addData("Sensor: ", i)
@@ -52,15 +51,7 @@ public class ColorTest extends LinearOpMode {
                         .addData("S:", HSVArray[i][1])
                         .addData("V:", HSVArray[i][2])
                         .addData("Dist:", DistArray[i]);
-            }*/
-
-            Colors[] CDetColor = ClawS.determineColors();
-
-                telemetry.addLine()
-                        .addData("S1", CDetColor[0])
-                        .addData("S2", CDetColor[1])
-                        .addData("S3", CDetColor[2]);
-
+            }
 
 
 

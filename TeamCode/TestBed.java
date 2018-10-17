@@ -31,17 +31,17 @@ public class TestBed extends LinearOpMode {
 
         Drive.Initialize(init_drive);
         Arm.Initialize(init_Arm, init_Extend);
-        //Claw.Initilize(init_Claw);
+        Claw.Initilize(init_Claw);
 
         waitForStart();
 
         while (opModeIsActive()){
             double Power[] = Drive.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            //telemetry.addLine("Power").addData("FL",Power[0]).addData("FR",Power[1])
-            //        .addData("RL",Power[2]).addData("RR",Power[3]);
+            telemetry.addLine("Power").addData("FL",Power[0]).addData("FR",Power[1])
+                    .addData("RL",Power[2]).addData("RR",Power[3]);
             Arm.ArmLiftPow(gamepad2.left_stick_y);
             Arm.ExtendArmPow(gamepad2.right_stick_y);
-            //Claw.ClawPos(gamepad2.a);
+            Claw.ClawPos(gamepad2.a);
             telemetry.update();
             idle();
         }
