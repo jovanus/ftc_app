@@ -25,26 +25,14 @@ public class ColorTest extends LinearOpMode {
         hardwareMap.get(DistanceSensor.class, "CSCent"),
         hardwareMap.get(DistanceSensor.class, "CSRight")};
 
-        telemetry.addLine("CS Null?").addData("CS1",CS[0] == null)
-                .addData("CS2",CS[1] == null)
-                .addData("CS3", CS[2] == null);
-        telemetry.addLine("DS Null?")
-                .addData("DS1",DS[0] == null)
-                .addData("DS2",DS[1] == null)
-                .addData("DS3",DS[2] == null);
-        telemetry.update();
-
-        sleep(5000);
-
         ClawS.Initialize(DS, CS);
-
 
         waitForStart();
 
         while(opModeIsActive()){
-            //float HSVArray[][] = ClawS.getHSV();
-            //double DistArray[] = ClawS.getDist();
-            /*
+            float HSVArray[][] = ClawS.getHSV();
+            double DistArray[] = ClawS.getDist();
+
             for (int i = 0; i < 3; i++) {
                 telemetry.addLine()
                         .addData("Sensor: ", i)
@@ -52,7 +40,7 @@ public class ColorTest extends LinearOpMode {
                         .addData("S:", HSVArray[i][1])
                         .addData("V:", HSVArray[i][2])
                         .addData("Dist:", DistArray[i]);
-            }*/
+            }
 
             Colors[] CDetColor = ClawS.determineColors();
 

@@ -7,43 +7,57 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.sun.tools.javac.comp.Todo;
 
-/**
- * Created by SorenTech on 10/13/2018.
- */
-
-enum ClawPos {LEFT, OPEN, RIGHT}
-
 
 public class ClawSystem {
     Servo Claw[];
 
 
-    final static double LEFT_CLOSE_CLAW = 1.0, RIGHT_CLOSE_CLAW = 0.0, OPEN_CLAW = 0.5;
+    final static double CLOSE_LEFT = 1.0, CLOSE_RIGHT = 0.0, OPEN_CLAW = 0.5;
 
-    public void Initilize(Servo ClawServos[], ColorSensor ColorSensors[], DistanceSensor DistanceSensors[]){
+    public void Initilize(Servo ClawServos[]){
         Claw = ClawServos;
 
     }
 
-    public double ClawPos(ClawPos Pos){
-        double setPosition;
+    public double[] ClawPos(ClawPos Pos){
+        double[] setPos = {0.5,0.5};
         switch (Pos){
-            case LEFT:
-                setPosition = LEFT_CLOSE_CLAW;
+            case LEFT1:
+                setPos[0] = CLOSE_LEFT;
+                setPos[1] = OPEN_CLAW;
+                break;
+            case LEFT2:
+                setPos[0] = CLOSE_LEFT;
+                setPos[1] = CLOSE_LEFT;
+                break;
+            case CENT:
+                setPos[0] = CLOSE_RIGHT;
+                setPos[1] = CLOSE_LEFT;
+                break;
+            case RIGHT2:
+                setPos[0] = CLOSE_RIGHT;
+                setPos[1] = CLOSE_RIGHT;
+                break;
+            case RIGHT1:
+                setPos[0] = OPEN_CLAW;
+                setPos[1] = CLOSE_RIGHT;
+                break;
+            case OUTSIDE:
+                setPos[0] = CLOSE_LEFT;
+                setPos[1] = CLOSE_RIGHT;
                 break;
             case OPEN:
             default:
-                setPosition = OPEN_CLAW;
-                break;
-            case RIGHT:
-                setPosition = RIGHT_CLOSE_CLAW;
+                setPos[0] = OPEN_CLAW;
+                setPos[1] = OPEN_CLAW;
                 break;
         }
-        for (Servo x :
-                Claw) {
-            x.setPosition(setPosition);
+
+        for (int i = 0; i < 2; i++) {
+            Claw[i].setPosition(setPos[i]);
         }
-        return setPosition;
+
+        return setPos;
     }
 
 

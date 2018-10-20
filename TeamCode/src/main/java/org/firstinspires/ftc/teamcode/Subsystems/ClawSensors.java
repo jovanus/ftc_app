@@ -11,16 +11,24 @@ public class ClawSensors {
 
     ColorSensor CS[];
     DistanceSensor DS[];
+    final static float YELLOW_HUE = 340, YELLOW_TOL = 10,
+            WHITE_HUE = 320, WHITE_TOL = 10;
 
     public void Initialize(DistanceSensor[] DistanceSensors, ColorSensor[] ColorSensors){
         CS = ColorSensors;
         DS = DistanceSensors;
     }
 
+    public void EnableLED(boolean enable){
+
+        CS[0].enableLed(enable);
+        CS[1].enableLed(enable);
+        CS[2].enableLed(enable);
+    }
+
     final static int CSCALE = 255;
     // @TODO: 10/13/2018 Determine Correct HUE
-    final static float YELLOW_VAL = 55, YELLOW_TOL = 10,
-            WHITE_VAL = 85, WHITE_TOL = 10;
+
     private float[] getHSV(ColorSensor Sensor){
         float HSVVal[] = {0,0,0};
         Color.RGBToHSV((int) Sensor.red() * CSCALE, (int) Sensor.green(), Sensor.blue() * CSCALE, HSVVal);
@@ -50,10 +58,10 @@ public class ClawSensors {
         double[] Dist = getDist();
 
         for (int i = 0; i < 3; i++) {
-            if (Math.abs(HSV[i][2] - WHITE_VAL) < WHITE_TOL && (DIST - Dist[i]) > 0){
+            if (Math.abs(HSV[i][0] - WHITE_HUE) < WHITE_TOL && (DIST - Dist[i]) > 0){
                 Output[i] = Colors.WHITE;
             }
-            else if (Math.abs(HSV[i][2] - YELLOW_VAL) < YELLOW_TOL && (DIST - Dist[i]) > 0){
+            else if (Math.abs(HSV[i][0] - YELLOW_HUE) < YELLOW_TOL && (DIST - Dist[i]) > 0){
                 Output[i] = Colors.YELLOW;
             }
         }
