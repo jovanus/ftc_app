@@ -4,11 +4,15 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.Arrays;
+
 public class AutomaticClaw {
     ClawSystem Claw;
     ClawSensors Sensors;
 
     public void Initialize(Servo[] CServos, ColorSensor[] CSensors, DistanceSensor[] DSensors){
+        Claw = new ClawSystem();
+        Sensors = new ClawSensors();
         Claw.Initilize(CServos);
         Sensors.Initialize(DSensors, CSensors);
     }
@@ -41,28 +45,31 @@ public class AutomaticClaw {
         return (YellowCount > WhiteCount ? YellowLocation : WhiteLocation);
     }
 
-    final static boolean[][] CHECKLIST =
+    public final static boolean[][] CHECKLIST =
             {{true, true, false}, // Left 2
                     {false, true, true}, // Right 2
                     {false, true, false}, // Center
                     {true, false, true}, // Outside
                     {true, false, false}, // Left 1
                     {false, false, true}, // Right 1
+                    {true, true, true},   // Right 2
                     {false, false, false}}; // Open
 
-    final static ClawPos[] OUTLIST = {
+
+    public final static ClawPos[] OUTLIST = {
             ClawPos.LEFT2,
             ClawPos.RIGHT2,
             ClawPos.CENT,
             ClawPos.OUTSIDE,
             ClawPos.LEFT1,
             ClawPos.RIGHT1,
+            ClawPos.RIGHT2,
             ClawPos.OPEN
     };
 
     public ClawPos DeterminePosition(boolean[] CloseLocation){
         for (int i = 0; i < OUTLIST.length; i++) {
-            if (CloseLocation == CHECKLIST[i]) {
+            if (Arrays.equals(CloseLocation,CHECKLIST[i])) {
                 return OUTLIST[i];
             }
         }
