@@ -9,8 +9,9 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.AutomaticClaw;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawSystem;
+import org.firstinspires.ftc.teamcode.Subsystems.ExtendArmSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.MechenumDrive;
+import org.firstinspires.ftc.teamcode.Subsystems.WheelieBar;
 
 @TeleOp(name = "TestOp")
 
@@ -19,6 +20,8 @@ public class TestBed extends LinearOpMode {
     MechenumDrive Drive = new MechenumDrive();
     ArmSystem Arm = new ArmSystem();
     AutomaticClaw Claw = new AutomaticClaw();
+    WheelieBar Wheelie = new WheelieBar();
+    private ExtendArmSystem Extend = new ExtendArmSystem();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,10 +35,12 @@ public class TestBed extends LinearOpMode {
             Drive.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             //telemetry.addLine("Power").addData("FL",Power[0]).addData("FR",Power[1])
             //        .addData("RL",Power[2]).addData("RR",Power[3]);
-            Arm.ArmLiftPow(gamepad2.left_stick_y);
-            Arm.ExtendArmPow(gamepad2.right_stick_y);
+            Arm.Power(gamepad2.left_stick_y);
+            Extend.Power(gamepad2.right_stick_y);
             if (gamepad2.b) Claw.OpenClaw();
             if (gamepad2.a) Claw.CloseClaw();
+            Wheelie.ActuateBar(gamepad2.right_bumper, gamepad2.left_bumper);
+            telemetry.addData("Pot:", Arm.GetPotVoltage());
             telemetry.update();
             idle();
         }
@@ -73,8 +78,10 @@ public class TestBed extends LinearOpMode {
                 hardwareMap.servo.get("C_Right")};
 
         Drive.Initialize(init_drive);
-        Arm.Initialize(init_Arm, init_Extend, init_Arm_Touch, init_Extend_Touch);
+        Arm.Initialize(init_Arm, init_Arm_Touch, hardwareMap.analogInput.get("Arm_P"));
+        Extend.Initialize(init_Extend, init_Extend_Touch);
         Claw.Initialize(CServo, CS, DS);
+        Wheelie.Initialize(hardwareMap.servo.get("Wheelie"), hardwareMap.get(RevTouchSensor.class,"Wheelie_Out"));
 
     }
 }

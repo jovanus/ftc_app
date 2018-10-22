@@ -3,20 +3,11 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
-import com.sun.tools.javac.util.ArrayUtils;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import java.util.Arrays;
-import java.util.Collections;
-
-import static java.util.Arrays.*;
 
 public class MechenumDrive {
 
     DcMotor DriveM[];
     private final double OUTPUT_SCALE_FACTOR = 1.0;
-
 
     /******************************************
      * Initialize with a motor array
@@ -27,11 +18,7 @@ public class MechenumDrive {
         DriveM[2].setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    /*PROTOTYPE
-    public void RunAtVoltage(double Voltage, double CurrentVoltage){
-        FL.setPower(Voltage/CurrentVoltage);
-    }
-    */
+
 
     public double[] Drive(double ForwardPower, double LateralPower, double RotationalPower){
         double x = deadzone(LateralPower);
@@ -93,5 +80,22 @@ public class MechenumDrive {
         }
         return Position;
     }
+
+    public boolean HasEncodersReset(){
+
+        for (double i :
+                getPosition()) {
+            if (i != 0) return false;
+        }
+        return true;
+    }
+
+    public void SetMode(DcMotor.RunMode SMode){
+        for (DcMotor i:
+             DriveM) {
+            i.setMode(SMode);
+        }
+    }
+
 
 }
