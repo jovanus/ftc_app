@@ -21,7 +21,7 @@ public class ArmSweepTest extends LinearOpMode {
         Thread e = new Thread(new Runnable() {
             @Override
             public void run() {
-                SweepArea(PosA, PosB, 10);
+                telemetry.addData("Result", SweepArea(PosA, PosB, 20));
             }
         });
 
@@ -34,9 +34,13 @@ public class ArmSweepTest extends LinearOpMode {
                 MinDetector.GoToPos(SetPos);
                 if (gamepad1.a) PosA = SetPos;
                 else if (gamepad1.b) PosB = SetPos;
-
                 if (gamepad1.y) e.start();
             }
+            telemetry.addLine("Set Points")
+                    .addData("A", PosA)
+                    .addData("B", PosB);
+
+            telemetry.update();
 
             idle();
         }

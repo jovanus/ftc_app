@@ -17,6 +17,7 @@ public class MineralDetector {
         CS = Col;
         DS = Dist;
         Arm = AServ;
+        Arm.setDirection(Servo.Direction.REVERSE);
     }
 
     final static int CSCALE = 255;
