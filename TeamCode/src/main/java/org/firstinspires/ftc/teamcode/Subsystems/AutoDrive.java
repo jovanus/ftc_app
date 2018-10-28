@@ -5,25 +5,25 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class AutoDrive extends MechenumDrive {
 
-    IMU imu = new IMU();
+    public IMU imu = new IMU();
 
-    public PID EncPID = new PID(.66,0,0,20) {
+    public PID EncPID = new PID(.33,0,0,20) {
         @Override
         protected double getInput() {
-            return resetValue - getPosition()[0];
+            return getPosition() - resetValue;
         }
 
         double resetValue = 0;
         @Override
         protected void resetInput() {
-            resetValue = getPosition()[0];
+            resetValue = getPosition();
         }
     };
 
-    public PID GyroPID = new PID(.025,0,0,10) {
+    public PID GyroPID = new PID(.033,0,0,20) {
         @Override
         protected double getInput() {
-            return resetvalue - imu.getAngles().firstAngle;
+            return imu.getAngles().firstAngle - resetvalue;
         }
 
         double resetvalue = 0;
@@ -36,6 +36,8 @@ public class AutoDrive extends MechenumDrive {
     public void initialize(DcMotor[] Motors, BNO055IMU IMUnit) {
         super.Initialize(Motors);
         imu.Initialize(IMUnit);
+        EncPID.invertOutput = true;
+        GyroPID.invertOutput = true;
     }
 
     public void StartEnc(){
@@ -71,7 +73,7 @@ public class AutoDrive extends MechenumDrive {
     }
 
     public void TurnToHeading(){
-        Drive(0, GyroPID.getOutput(), 0);
+        Drive(0, 0, GyroPID.getOutput());
     }
 
     public double PositionError(){
@@ -96,6 +98,16 @@ public class AutoDrive extends MechenumDrive {
 
     public void setHeading(double Angle){
         GyroPID.setSetPoint(Angle);
+    }
+
+    public void DisableSensors(){
+        imu.Disable();
+        EncPID.Deactivate();
+        GyroPID.Deactivate();
+    }
+
+    public void Unwind(double power){
+        DriveM[0].setPower(power);
     }
 
 }

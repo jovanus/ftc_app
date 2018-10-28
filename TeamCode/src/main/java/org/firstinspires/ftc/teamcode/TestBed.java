@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSystem;
+import org.firstinspires.ftc.teamcode.Subsystems.AutoDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.AutomaticClaw;
 import org.firstinspires.ftc.teamcode.Subsystems.ExtendArmSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.MechenumDrive;
@@ -21,7 +23,7 @@ public class TestBed extends LinearOpMode {
     ArmSystem Arm = new ArmSystem();
     AutomaticClaw Claw = new AutomaticClaw();
     WheelieBar Wheelie = new WheelieBar();
-    private ExtendArmSystem Extend = new ExtendArmSystem();
+    ExtendArmSystem Extend = new ExtendArmSystem();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -35,15 +37,23 @@ public class TestBed extends LinearOpMode {
             Drive.Drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             //telemetry.addLine("Power").addData("FL",Power[0]).addData("FR",Power[1])
             //        .addData("RL",Power[2]).addData("RR",Power[3]);
+
             Arm.Power(gamepad2.left_stick_y);
             Extend.Power(gamepad2.right_stick_y);
             if (gamepad2.b) Claw.OpenClaw();
             if (gamepad2.a) Claw.CloseClaw();
-            Wheelie.ActuateBar(gamepad2.right_bumper, gamepad2.left_bumper);
+            Wheelie.ActuateBar(gamepad1.right_bumper, gamepad1.left_bumper);
             telemetry.addData("Pot:", Arm.GetPotVoltage());
             telemetry.update();
+
+            //if (gamepad1.a) Drive.Wind(-1);
+
+            if (gamepad1.a) Drive.SetMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            else if (gamepad1.b) Drive.SetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             idle();
         }
+
     }
 
 

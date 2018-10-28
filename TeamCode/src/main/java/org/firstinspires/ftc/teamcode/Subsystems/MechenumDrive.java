@@ -63,31 +63,17 @@ public class MechenumDrive {
         }
     }
 
-    public double[] getEncoders(){
-        double EncVal[] = new double[4];
-        for (int i = 0; i < 4; i++) {
-            EncVal[i] = DriveM[i].getCurrentPosition();
-        }
-        return EncVal;
+    public double getEncoders(){
+        return DriveM[0].getCurrentPosition();
     }
 
     public final static double ENC_SCALE = Math.PI * 4 / ( 8 * 280);
-    public double[] getPosition(){
-        double[] Position = getEncoders();
-
-        for (double i : Position) {
-            i = i * ENC_SCALE;
-        }
-        return Position;
+    public double getPosition(){
+        return getEncoders() * ENC_SCALE;
     }
 
     public boolean HasEncodersReset(){
-
-        for (double i :
-                getPosition()) {
-            if (i != 0) return false;
-        }
-        return true;
+        return getEncoders() == 0;
     }
 
     public void SetMode(DcMotor.RunMode SMode){
@@ -97,5 +83,8 @@ public class MechenumDrive {
         }
     }
 
+    public void Wind(double power){
+        DriveM[0].setPower(power);
+    }
 
 }
