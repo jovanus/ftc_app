@@ -1,14 +1,18 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-@TeleOp(name = "TestArm")
+import org.firstinspires.ftc.teamcode.Subsystems.Colors;
+import org.firstinspires.ftc.teamcode.Subsystems.MineralDetector;
+
+@TeleOp(name = "TestArm2")
 
 public class ArmSweepTest extends LinearOpMode {
     MineralDetector MinDetector = new MineralDetector();
     double PosA = 0, PosB = 1;
+    boolean result = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,7 +25,7 @@ public class ArmSweepTest extends LinearOpMode {
         Thread e = new Thread(new Runnable() {
             @Override
             public void run() {
-                telemetry.addData("Result", SweepArea(PosA, PosB, 20));
+                result = SweepArea(PosA, PosB, 20);
             }
         });
 
@@ -39,6 +43,7 @@ public class ArmSweepTest extends LinearOpMode {
             telemetry.addLine("Set Points")
                     .addData("A", PosA)
                     .addData("B", PosB);
+            telemetry.addData("Result", result);
 
             telemetry.update();
 
