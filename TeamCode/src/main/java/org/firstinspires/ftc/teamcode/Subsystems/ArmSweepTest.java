@@ -56,9 +56,9 @@ public class ArmSweepTest extends LinearOpMode {
         }
         for (int i = 0; i < Jumps; i++) {
             MinDetector.GoToPos(Begin + i * spaceBetweenJumps);
-            if (MinDetector.determineColor() == Colors.YELLOW) return true;
-            else if (MinDetector.determineColor() == Colors.WHITE) return false;
             sleep(20);
+            if (MinDetector.determineColor() == Colors.YELLOW) return true;
+            else if (MinDetector.determineColor() == Colors.WHITE) break;
         }
         return false;
     }
