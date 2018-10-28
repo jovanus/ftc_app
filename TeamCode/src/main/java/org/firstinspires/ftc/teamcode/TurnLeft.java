@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Autonomous(name = "Test")
+@Autonomous(name = "White Ball")
 
 public class TurnLeft extends BaseAuto {
     @Override

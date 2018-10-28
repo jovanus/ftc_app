@@ -20,13 +20,16 @@ public class PixyCam {
         Pixy.engage();
     }
 
+    public void stop() {Pixy.disengage();}
+
     public byte[] ReadData(){
-        byte[] var = new byte[14];
+       /* byte[] var = new byte[14];
         for (int i = 0; i < 14; i++) {
             var[i] = Pixy.read8(i);
         }
+        */
 
-        return var;
+        return Pixy.read(0x54,5);
     }
 
 

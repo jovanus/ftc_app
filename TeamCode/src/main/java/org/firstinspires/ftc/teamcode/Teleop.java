@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,19 +8,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSystem;
-import org.firstinspires.ftc.teamcode.Subsystems.AutoDrive;
-import org.firstinspires.ftc.teamcode.Subsystems.AutomaticClaw;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ExtendArmSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.MechenumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.WheelieBar;
 
-@TeleOp(name = "TestOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
 
-public class TestBed extends LinearOpMode {
+public class Teleop extends LinearOpMode {
 
     MechenumDrive Drive = new MechenumDrive();
     ArmSystem Arm = new ArmSystem();
-    AutomaticClaw Claw = new AutomaticClaw();
+    ClawSystem Claw = new ClawSystem();
     WheelieBar Wheelie = new WheelieBar();
     ExtendArmSystem Extend = new ExtendArmSystem();
 
@@ -29,8 +27,6 @@ public class TestBed extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         this.Initialize();
-        Claw.OpenClaw();
-
         waitForStart();
 
         while (opModeIsActive()){
@@ -38,13 +34,10 @@ public class TestBed extends LinearOpMode {
             //telemetry.addLine("Power").addData("FL",Power[0]).addData("FR",Power[1])
             //        .addData("RL",Power[2]).addData("RR",Power[3]);
 
-            Arm.Power(gamepad2.left_stick_y);
-            Extend.Power(gamepad2.right_stick_y);
-            if (gamepad2.b) Claw.OpenClaw();
-            if (gamepad2.a) Claw.CloseClaw();
+            Arm.Power(-gamepad2.left_stick_y);
+            Extend.Power(-gamepad2.right_stick_y);
+            Claw.SimpleOpenClose(gamepad2.y, gamepad2.a, gamepad2.x, gamepad2.b);
             Wheelie.ActuateBar(gamepad1.right_bumper, gamepad1.left_bumper);
-            telemetry.addData("Pot:", Arm.GetPotVoltage());
-            telemetry.update();
 
             //if (gamepad1.a) Drive.Wind(-1);
 
@@ -90,7 +83,7 @@ public class TestBed extends LinearOpMode {
         Drive.Initialize(init_drive);
         Arm.Initialize(init_Arm, init_Arm_Touch, hardwareMap.analogInput.get("Arm_P"));
         Extend.Initialize(init_Extend, init_Extend_Touch);
-        Claw.Initialize(CServo, CS, DS);
+        Claw.Initialize(CServo);
         Wheelie.Initialize(hardwareMap.servo.get("Wheelie"), hardwareMap.get(RevTouchSensor.class,"Wheelie_Out"));
 
     }

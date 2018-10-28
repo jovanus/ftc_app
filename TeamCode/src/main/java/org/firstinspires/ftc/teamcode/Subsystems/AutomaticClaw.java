@@ -13,7 +13,7 @@ public class AutomaticClaw {
     public void Initialize(Servo[] CServos, ColorSensor[] CSensors, DistanceSensor[] DSensors){
         Claw = new ClawSystem();
         Sensors = new ClawSensors();
-        Claw.Initilize(CServos);
+        Claw.Initialize(CServos);
         Sensors.Initialize(DSensors, CSensors);
     }
 

@@ -14,8 +14,9 @@ public class ClawSystem {
 
     final static double CLOSE_LEFT = 1.0, CLOSE_RIGHT = 0.0, OPEN_CLAW = 0.5;
 
-    public void Initilize(Servo ClawServos[]){
+    public void Initialize(Servo ClawServos[]){
         Claw = ClawServos;
+        Claw[0].setDirection(Servo.Direction.REVERSE);
 
     }
 
@@ -58,6 +59,28 @@ public class ClawSystem {
         }
 
         return setPos;
+    }
+
+    final static double SOPEN_CLAW = 0.0;
+    final static double SCLOSE_CLAW = 1.0;
+    public void SimpleOpenClose(boolean OpenAll, boolean CloseAll, boolean OpenLeft, boolean OpenRight){
+        if (OpenAll) {
+            Claw[0].setPosition(SOPEN_CLAW);
+            Claw[1].setPosition(SOPEN_CLAW);
+        }
+
+        if (CloseAll) {
+            Claw[0].setPosition(SCLOSE_CLAW);
+            Claw[1].setPosition(SCLOSE_CLAW);
+        }
+
+        if (OpenLeft){
+            Claw[0].setPosition(SOPEN_CLAW);
+        }
+
+        if (OpenRight){
+            Claw[1].setPosition(SOPEN_CLAW);
+        }
     }
 
 

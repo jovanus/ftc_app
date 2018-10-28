@@ -11,8 +11,6 @@ public class ClawSensors {
 
     ColorSensor CS[];
     DistanceSensor DS[];
-    final static float YELLOW_HUE = 340, YELLOW_TOL = 10,
-            WHITE_HUE = 320, WHITE_TOL = 10;
 
     public void Initialize(DistanceSensor[] DistanceSensors, ColorSensor[] ColorSensors){
         CS = ColorSensors;
@@ -51,6 +49,8 @@ public class ClawSensors {
         return dist;
     }
 
+    final static float YELLOW_HUE = 340, YELLOW_TOL = 10,
+            WHITE_HUE = 320, WHITE_TOL = 10;
     final static double DIST = 75;
     public Colors[] determineColors(){
         Colors Output[] = {Colors.UNKNOWN, Colors.UNKNOWN, Colors.UNKNOWN};

@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.AutoDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.AutomaticClaw;
 import org.firstinspires.ftc.teamcode.Subsystems.ExtendArmSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.MechenumDrive;
+import org.firstinspires.ftc.teamcode.Subsystems.MineralDetector;
 import org.firstinspires.ftc.teamcode.Subsystems.WheelieBar;
 
 public abstract class BaseAuto extends LinearOpMode {
@@ -22,6 +23,7 @@ public abstract class BaseAuto extends LinearOpMode {
     AutomaticClaw Claw = new AutomaticClaw();
     WheelieBar Wheelie = new WheelieBar();
     ExtendArmSystem Extend = new ExtendArmSystem();
+    MineralDetector MinDetector = new MineralDetector();
 
     protected void TurnToHeading(double Angle){
         Drive.setHeading(Angle);
@@ -98,7 +100,7 @@ public abstract class BaseAuto extends LinearOpMode {
         Extend.Initialize(init_Extend, init_Extend_Touch);
         Claw.Initialize(CServo, CS, DS);
         Wheelie.Initialize(hardwareMap.servo.get("Wheelie"), hardwareMap.get(RevTouchSensor.class,"Wheelie_Out"));
-
+        MinDetector.Initialize(hardwareMap.colorSensor.get("MinDetector"), hardwareMap.get(DistanceSensor.class, "MinDetector"));
     }
 
     protected void LandingSequence(){
