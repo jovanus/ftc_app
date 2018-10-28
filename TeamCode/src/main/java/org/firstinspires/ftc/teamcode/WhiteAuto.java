@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @Autonomous(name = "White Ball")
 
-public class TurnLeft extends BaseAuto {
+public class WhiteAuto extends BaseAuto {
     @Override
     public void runOpMode() throws InterruptedException {
         Initialize();
@@ -15,7 +15,7 @@ public class TurnLeft extends BaseAuto {
 
         waitForStart();
 
-        //LandingSequence();
+        LandingSequence();
 
         Drive.EncPID.Reset();
         DrivetoPosition(12.0);
@@ -26,7 +26,7 @@ public class TurnLeft extends BaseAuto {
         DrivetoPosition(48.0);
         //TurnToHeading(120);
         resetStartTime();
-        while (getRuntime() < 0.3) Drive.Drive(0,0, -1);
+        while (getRuntime() < 0.3 && opModeIsActive()) Drive.Drive(0,0, -1);
         Drive.Stop();
 
         Drive.EncPID.Reset();

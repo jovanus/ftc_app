@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.AutoDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.AutomaticClaw;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawSystem;
+import org.firstinspires.ftc.teamcode.Subsystems.Colors;
 import org.firstinspires.ftc.teamcode.Subsystems.ExtendArmSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.MechenumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.MineralDetector;
@@ -20,7 +22,7 @@ public abstract class BaseAuto extends LinearOpMode {
 
     AutoDrive Drive = new AutoDrive();
     ArmSystem Arm = new ArmSystem();
-    AutomaticClaw Claw = new AutomaticClaw();
+    ClawSystem Claw = new ClawSystem();
     WheelieBar Wheelie = new WheelieBar();
     ExtendArmSystem Extend = new ExtendArmSystem();
     MineralDetector MinDetector = new MineralDetector();
@@ -33,7 +35,7 @@ public abstract class BaseAuto extends LinearOpMode {
                 .addData("Output :", Drive.GyroPID.getOutput());
         telemetry.update();
 
-        while (!Drive.isHeadingInTolerance()){
+        while (!Drive.isHeadingInTolerance() && opModeIsActive()){
             telemetry.addLine()
                     .addData("Run: ", Drive.isHeadingInTolerance())
                     .addData("Error :", Drive.getHeadingError())
@@ -54,7 +56,7 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.update();
 
         sleep(2000);
-        while (!Drive.isPositionInTolerance()){
+        while (!Drive.isPositionInTolerance() && opModeIsActive()){
             telemetry.addLine()
                     .addData("Run: ", Drive.isPositionInTolerance())
                     .addData("Error :", Drive.PositionError())
@@ -66,6 +68,8 @@ public abstract class BaseAuto extends LinearOpMode {
     }
 
     public void Initialize(){
+
+        // Create Initializer Arrays
         final DcMotor init_drive[] = {
                 hardwareMap.dcMotor.get("D_FL"),
                 hardwareMap.dcMotor.get("D_FR"),
@@ -86,21 +90,21 @@ public abstract class BaseAuto extends LinearOpMode {
         final RevTouchSensor init_Extend_Touch[] = {
                 hardwareMap.get(RevTouchSensor.class, "A_TILT_UP_T"),
                 hardwareMap.get(RevTouchSensor.class, "A_TILT_DOWN_T")};
-        final ColorSensor CS[] = {hardwareMap.get(ColorSensor.class, "CSLeft"),
-                hardwareMap.get(ColorSensor.class, "CSCent"),
-                hardwareMap.get(ColorSensor.class, "CSRight")};
-        final DistanceSensor DS[] = {hardwareMap.get(DistanceSensor.class, "CSLeft"),
-                hardwareMap.get(DistanceSensor.class, "CSCent"),
-                hardwareMap.get(DistanceSensor.class, "CSRight")};
         final Servo CServo[] = {hardwareMap.servo.get("C_Left"),
                 hardwareMap.servo.get("C_Right")};
 
-        Drive.initialize(init_drive, hardwareMap.get(BNO055IMU.class, "imu"));
-        Arm.Initialize(init_Arm, init_Arm_Touch, hardwareMap.analogInput.get("Arm_P"));
+        // Initializers
+        Drive.initialize(init_drive,
+                hardwareMap.get(BNO055IMU.class,"imu"));
+        Arm.Initialize(init_Arm, init_Arm_Touch,
+                hardwareMap.analogInput.get("Arm_P"));
         Extend.Initialize(init_Extend, init_Extend_Touch);
-        Claw.Initialize(CServo, CS, DS);
-        Wheelie.Initialize(hardwareMap.servo.get("Wheelie"), hardwareMap.get(RevTouchSensor.class,"Wheelie_Out"));
-        MinDetector.Initialize(hardwareMap.colorSensor.get("MinDetector"), hardwareMap.get(DistanceSensor.class, "MinDetector"));
+        Claw.Initialize(CServo);
+        Wheelie.Initialize(hardwareMap.servo.get("Wheelie"),
+                hardwareMap.get(RevTouchSensor.class,"Wheelie_Out"));
+        MinDetector.Initialize(hardwareMap.servo.get("MinSweep"),
+                hardwareMap.colorSensor.get("MinDetector"),
+                hardwareMap.get(DistanceSensor.class, "MinDetector"));
     }
 
     protected void LandingSequence(){
@@ -118,7 +122,6 @@ public abstract class BaseAuto extends LinearOpMode {
         Extend.Power(1);
         resetStartTime();
         while (getRuntime() < 1.75) idle();
-        //while (!Extend.TouchStatus()[0]);
 
         Extend.Power(0);
 
@@ -134,6 +137,22 @@ public abstract class BaseAuto extends LinearOpMode {
         Extend.Power(-1);
         while (!Extend.TouchStatus()[1]);
         Extend.Power(0);
+    }
+
+
+    public boolean SweepArea(double Begin, double End, int Jumps){
+        double startTime = getRuntime();
+        double spaceBetweenJumps = (End - Begin)/Jumps;
+        while(getRuntime() < (startTime + 0.75)){
+            MinDetector.GoToPos(Begin);
+        }
+        for (int i = 0; i < Jumps; i++) {
+            MinDetector.GoToPos(Begin + i * spaceBetweenJumps);
+            if (MinDetector.determineColor() == Colors.YELLOW) return true;
+            else if (MinDetector.determineColor() == Colors.WHITE) return false;
+            sleep(20);
+        }
+        return false;
     }
 
     @Override
