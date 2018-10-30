@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+@Autonomous(name = "Yellow Mode")
 
 public class BlockAuto extends BaseAuto {
 
@@ -10,24 +13,28 @@ public class BlockAuto extends BaseAuto {
         Claw.SimpleOpenClose(false, true, false,false);
 
         waitForStart();
+        Drive.EnableSensors();
 
-        LandingSequence();
+        //LandingSequence();
 
         Drive.EncPID.Reset();
-        DrivetoPosition(6);
+        sleep(50);
+        DrivetoPosition(4);
 
-        double BlockHeading = 30;
-        if (SweepArea(0.5, 0.25, 20)) BlockHeading = -30;
-        else if (SweepArea(0.5, 0.0, 20)) BlockHeading = 0;
+        double BlockHeading = 35;
+        if (SweepArea(0.5, 0.25, 10)) BlockHeading *= -1;
+        else if (SweepArea(0.25, 0.0, 10)) BlockHeading = 0;
 
         TurnToHeading(BlockHeading);
 
         Drive.EncPID.Reset();
-        DrivetoPosition(16);
+        MinDetector.GoToPos(1);
+        DrivetoPosition(28);
 
         TurnToHeading(-BlockHeading);
 
 
+        Drive.DisableSensors();
 
         while (opModeIsActive());
     }
