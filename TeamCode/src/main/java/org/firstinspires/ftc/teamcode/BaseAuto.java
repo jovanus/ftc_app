@@ -143,14 +143,13 @@ public abstract class BaseAuto extends LinearOpMode {
     public boolean SweepArea(double Begin, double End, int Jumps){
         double startTime = getRuntime();
         double spaceBetweenJumps = (End - Begin)/Jumps;
-        while(getRuntime() < (startTime + 0.75)){
-            MinDetector.GoToPos(Begin);
-        }
+        MinDetector.GoToPos(Begin);
+        sleep(750);
         for (int i = 0; i < Jumps; i++) {
             MinDetector.GoToPos(Begin + i * spaceBetweenJumps);
-            if (MinDetector.determineColor() == Colors.YELLOW) return true;
-            else if (MinDetector.determineColor() == Colors.WHITE) return false;
             sleep(20);
+            if (MinDetector.determineColor() == Colors.YELLOW) return true;
+            else if (MinDetector.determineColor() == Colors.WHITE) break;
         }
         return false;
     }

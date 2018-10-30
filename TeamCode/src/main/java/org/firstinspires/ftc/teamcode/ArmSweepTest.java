@@ -56,9 +56,8 @@ public class ArmSweepTest extends LinearOpMode {
     public boolean SweepArea(double Begin, double End, int Jumps){
         double startTime = getRuntime();
         double spaceBetweenJumps = (End - Begin)/Jumps;
-        while(getRuntime() < (startTime + 0.75)){
-            MinDetector.GoToPos(Begin);
-        }
+        MinDetector.GoToPos(Begin);
+        sleep(750);
         for (int i = 0; i < Jumps; i++) {
             MinDetector.GoToPos(Begin + i * spaceBetweenJumps);
             sleep(20);
