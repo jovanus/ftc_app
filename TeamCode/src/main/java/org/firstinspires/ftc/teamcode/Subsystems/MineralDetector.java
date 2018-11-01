@@ -31,15 +31,13 @@ public class MineralDetector {
         return DS.getDistance(DistanceUnit.MM);
     }
 
-    final static float YELLOW_HUE = 25, YELLOW_TOL = 5,
-            WHITE_HUE = 35, WHITE_TOL = 5;
+    final static float YELLOW_HUE = 25.0f, YELLOW_TOL = 5.0f, YELLOW_VAL = 35f,
+            WHITE_HUE = 35f, WHITE_TOL = 5f, WHITE_VAL = 60f, YELLOW_SAT = 0.6f, WHITE_SAT = 0.25f, SAT_TOL = 0.2f;
     public Colors determineColor(){
         Colors Output[] = {Colors.UNKNOWN, Colors.UNKNOWN, Colors.UNKNOWN};
         float[] HSV = getHSV();
-        if (Double.isNaN(getDist())) return Colors.UNKNOWN;
-
-        if (Math.abs(HSV[0] - WHITE_HUE) < WHITE_TOL) return Colors.WHITE;
-        else if (Math.abs(HSV[0] - YELLOW_HUE) < YELLOW_TOL) return Colors.YELLOW;
+        if (Math.abs(HSV[1] - WHITE_SAT) < SAT_TOL  && getDist() < 100) return Colors.WHITE;
+        else if (Math.abs(HSV[1] - YELLOW_SAT) < SAT_TOL  && getDist() < 100) return Colors.YELLOW;
         else return  Colors.UNKNOWN;
     }
 

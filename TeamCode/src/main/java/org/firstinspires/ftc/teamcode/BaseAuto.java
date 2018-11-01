@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.google.blocks.ftcrobotcontroller.runtime.Block;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Subsystems.ArmSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.AutoDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.AutomaticClaw;
+import org.firstinspires.ftc.teamcode.Subsystems.BlockPosition;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Colors;
 import org.firstinspires.ftc.teamcode.Subsystems.ExtendArmSystem;
@@ -29,6 +31,7 @@ public abstract class BaseAuto extends LinearOpMode {
 
     protected void TurnToHeading(double Angle){
         Drive.setHeading(Angle);
+        sleep(30);
         telemetry.addLine()
                 .addData("Run: ", Drive.isHeadingInTolerance())
                 .addData("Error :", Drive.getHeadingError())
@@ -111,7 +114,7 @@ public abstract class BaseAuto extends LinearOpMode {
         // Land
         Arm.Power(-0.75);
         Drive.Unwind(1);
-        while(Arm.GetPotVoltage() > 0.665){
+        while(Arm.GetPotVoltage() > 0.70){
             telemetry.addData("Arm Pos", Arm.GetPotVoltage());
             telemetry.update();
         }
@@ -120,10 +123,10 @@ public abstract class BaseAuto extends LinearOpMode {
 
         // Extend Arm
         Extend.Power(1);
-        resetStartTime();
-        while (getRuntime() < 1.75) idle();
-
+        Arm.Power(0.2);
+        sleep(1500);
         Extend.Power(0);
+        Arm.Power(0);
 
         // Move Arm Forward
         Arm.Power(0.3);
@@ -152,6 +155,41 @@ public abstract class BaseAuto extends LinearOpMode {
             else if (MinDetector.determineColor() == Colors.WHITE) break;
         }
         return false;
+    }
+
+    public BlockPosition DetectBlock(){
+        BlockPosition BPos = BlockPosition.LEFT;
+        if (SweepArea(0.45, 0.25, 15)) BPos = BlockPosition.RIGHT;
+        else if (SweepArea(0.25, 0.1, 10)) BPos = BlockPosition.CENTER;
+        telemetry.addData("Block: ", BPos.toString());
+        telemetry.update();
+        return BPos;
+    }
+
+    public void DriveToBlock(BlockPosition BPos){
+        switch (BPos){
+            case LEFT:
+                TurnToHeading(35);
+                break;
+            case CENTER:
+                break;
+            case RIGHT:
+                TurnToHeading(-35);
+                break;
+        }
+        Drive.EncPID.Reset();
+        MinDetector.GoToPos(1);
+        DrivetoPosition(28);
+        switch (BPos){
+            case LEFT:
+                TurnToHeading(-35);
+                break;
+            case CENTER:
+                break;
+            case RIGHT:
+                TurnToHeading(35);
+                break;
+        }
     }
 
     @Override

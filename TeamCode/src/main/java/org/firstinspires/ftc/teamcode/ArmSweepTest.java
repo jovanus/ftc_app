@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Colors;
 import org.firstinspires.ftc.teamcode.Subsystems.MineralDetector;
 
 @TeleOp(name = "TestArm2")
+@Disabled
 
 public class ArmSweepTest extends LinearOpMode {
     MineralDetector MinDetector = new MineralDetector();

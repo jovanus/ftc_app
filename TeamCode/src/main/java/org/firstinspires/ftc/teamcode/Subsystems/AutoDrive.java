@@ -81,7 +81,7 @@ public class AutoDrive extends MechenumDrive {
     }
 
     public boolean isHeadingInTolerance(){
-        return Math.abs(GyroPID.getError()) < 2;
+        return Math.abs(GyroPID.getError()) < 4;
     }
 
     public double getHeadingError(){
