@@ -44,6 +44,9 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.a) Drive.SetMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             else if (gamepad1.b) Drive.SetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+            telemetry.addData("Arm Angle", Arm.GetPotVoltage());
+
+            telemetry.update();
             idle();
         }
 
@@ -62,21 +65,26 @@ public class Teleop extends LinearOpMode {
         final DcMotor init_Extend[] = {
                 hardwareMap.dcMotor.get("E_Left"),
                 hardwareMap.dcMotor.get("E_Right")};
+
         final Servo init_Claw[] = {
                 hardwareMap.servo.get("C_Left"),
                 hardwareMap.servo.get("C_Right")};
+
         final RevTouchSensor init_Arm_Touch[] = {
                 hardwareMap.get(RevTouchSensor.class, "A_OUT_T"),
                 hardwareMap.get(RevTouchSensor.class, "A_IN_T")};
         final RevTouchSensor init_Extend_Touch[] = {
                 hardwareMap.get(RevTouchSensor.class, "A_TILT_UP_T"),
                 hardwareMap.get(RevTouchSensor.class, "A_TILT_DOWN_T")};
+        /*
         final ColorSensor CS[] = {hardwareMap.get(ColorSensor.class, "CSLeft"),
                 hardwareMap.get(ColorSensor.class, "CSCent"),
                 hardwareMap.get(ColorSensor.class, "CSRight")};
+
         final DistanceSensor DS[] = {hardwareMap.get(DistanceSensor.class, "CSLeft"),
                 hardwareMap.get(DistanceSensor.class, "CSCent"),
                 hardwareMap.get(DistanceSensor.class, "CSRight")};
+        */
         final Servo CServo[] = {hardwareMap.servo.get("C_Left"),
                 hardwareMap.servo.get("C_Right")};
 

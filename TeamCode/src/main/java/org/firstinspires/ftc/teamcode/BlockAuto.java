@@ -17,28 +17,40 @@ public class BlockAuto extends BaseAuto {
         waitForStart();
         Drive.EnableSensors();
 
+
         LandingSequence();
 
         Drive.EncPID.Reset();
         Drive.GyroPID.Reset();
         sleep(50);
-        DrivetoPosition(5.5);
+        DrivetoPosition(4.875);
 
         DriveToBlock(DetectBlock());
 
-        Arm.Power(0.3);
-        while(Arm.GetPotVoltage() < 1.5){
+
+        Drive.EncPID.Reset();
+        DrivetoPosition(9);
+
+        Arm.Power(1.0);
+        while(Arm.GetPotVoltage() < 2.0){
             telemetry.addData("Arm Pos", Arm.GetPotVoltage());
             telemetry.update();
         }
         Arm.Power(0);
 
+        /*
         Extend.Power(1);
-        sleep(1000);
+        sleep(1300);
         Extend.Power(0);
+        */
 
         Claw.SimpleOpenClose(true, false,false,false);
-        sleep(200);
+        Drive.Drive(1.0,0,0);
+        sleep(600);
+        Drive.Stop();
+
+
+
 
         Extend.Power(-1);
         while (!Extend.TouchStatus()[1]);

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.google.blocks.ftcrobotcontroller.runtime.Block;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -130,7 +129,7 @@ public abstract class BaseAuto extends LinearOpMode {
 
         // Move Arm Forward
         Arm.Power(0.3);
-        while(Arm.GetPotVoltage() < 0.64){
+        while(Arm.GetPotVoltage() < 1.3){
             telemetry.addData("Arm Pos", Arm.GetPotVoltage());
             telemetry.update();
         }
@@ -159,8 +158,8 @@ public abstract class BaseAuto extends LinearOpMode {
 
     public BlockPosition DetectBlock(){
         BlockPosition BPos = BlockPosition.LEFT;
-        if (SweepArea(0.45, 0.25, 15)) BPos = BlockPosition.RIGHT;
-        else if (SweepArea(0.25, 0.1, 10)) BPos = BlockPosition.CENTER;
+        if (SweepArea(0.45, 0.3, 15)) BPos = BlockPosition.RIGHT;
+        else if (SweepArea(0.19, 0.1, 15)) BPos = BlockPosition.CENTER;
         telemetry.addData("Block: ", BPos.toString());
         telemetry.update();
         return BPos;
