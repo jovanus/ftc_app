@@ -61,7 +61,7 @@ public class ClawSystem {
         return setPos;
     }
 
-    final static double SOPEN_CLAW = 0.0;
+    final static double SOPEN_CLAW = 0.5;
     final static double SCLOSE_CLAW = 1.0;
     public void SimpleOpenClose(boolean OpenAll, boolean CloseAll, boolean OpenLeft, boolean OpenRight){
         if (OpenAll) {

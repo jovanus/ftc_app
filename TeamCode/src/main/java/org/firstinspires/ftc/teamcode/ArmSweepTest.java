@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.teamcode.Subsystems.Colors;
 import org.firstinspires.ftc.teamcode.Subsystems.MineralDetector;
 
-@TeleOp(name = "TestArm2")
-@Disabled
+@TeleOp(name = "TestArm")
+//@Disabled
 
 public class ArmSweepTest extends LinearOpMode {
     MineralDetector MinDetector = new MineralDetector();
@@ -45,7 +45,17 @@ public class ArmSweepTest extends LinearOpMode {
             telemetry.addLine("Set Points")
                     .addData("A", PosA)
                     .addData("B", PosB);
+
+            float [] hsv = MinDetector.getHSV();
+            telemetry.addLine("Color")
+                    .addData("H", hsv[0])
+                    .addData("S", hsv[1])
+                    .addData("V", hsv[2]);
+
             telemetry.addData("Result", result);
+
+            telemetry.addData("Color", MinDetector.determineColor().toString());
+            telemetry.addData("Distance", MinDetector.getDist());
 
             telemetry.update();
 

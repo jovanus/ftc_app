@@ -23,7 +23,7 @@ public class BlockAuto extends BaseAuto {
         Drive.EncPID.Reset();
         Drive.GyroPID.Reset();
         sleep(50);
-        DrivetoPosition(4.875);
+        DrivetoPosition(5.5);
 
         DriveToBlock(DetectBlock());
 
@@ -32,7 +32,7 @@ public class BlockAuto extends BaseAuto {
         DrivetoPosition(9);
 
         Arm.Power(1.0);
-        while(Arm.GetPotVoltage() < 2.0){
+        while(Arm.GetPotVoltage() < 1.9){
             telemetry.addData("Arm Pos", Arm.GetPotVoltage());
             telemetry.update();
         }

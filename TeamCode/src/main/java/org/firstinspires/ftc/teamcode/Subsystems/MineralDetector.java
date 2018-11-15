@@ -32,12 +32,12 @@ public class MineralDetector {
     }
 
     final static float YELLOW_HUE = 25.0f, YELLOW_TOL = 5.0f, YELLOW_VAL = 35f,
-            WHITE_HUE = 35f, WHITE_TOL = 5f, WHITE_VAL = 60f, YELLOW_SAT = 0.6f, WHITE_SAT = 0.25f, SAT_TOL = 0.2f;
+            WHITE_HUE = 35f, WHITE_TOL = 5f, WHITE_VAL = 60f, YELLOW_SAT = 0.58f, WHITE_SAT = 0.15f, SAT_TOL = 0.2f;
     public Colors determineColor(){
         Colors Output[] = {Colors.UNKNOWN, Colors.UNKNOWN, Colors.UNKNOWN};
         float[] HSV = getHSV();
-        if (Math.abs(HSV[1] - WHITE_SAT) < SAT_TOL  && getDist() < 100) return Colors.WHITE;
-        else if (Math.abs(HSV[1] - YELLOW_SAT) < SAT_TOL  && getDist() < 100) return Colors.YELLOW;
+        if (Math.abs(HSV[1] - WHITE_SAT) < SAT_TOL  && !Double.isNaN(getDist())) return Colors.WHITE;
+        else if (Math.abs(HSV[1] - YELLOW_SAT) < SAT_TOL  && !Double.isNaN(getDist())) return Colors.YELLOW;
         else return  Colors.UNKNOWN;
     }
 

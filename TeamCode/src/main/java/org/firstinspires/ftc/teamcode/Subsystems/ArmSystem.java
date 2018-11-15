@@ -23,7 +23,7 @@ public class ArmSystem {
         for (DcMotor x :
                 Arm) {
             //If Up Sensor is pressed, only allow values 0 - -1.  If Down sensor is pressed, only allow values 0 - 1
-            double limPower = Range.clip(Power, LimitsArm[1].isPressed() ? 0 : -1, LimitsArm[0].isPressed() ? 0 : 1);
+            double limPower = Range.clip(Power, GetPotVoltage() < 0.5d ? 0 : -1,  1);
             x.setPower(limPower);
         }
     }
