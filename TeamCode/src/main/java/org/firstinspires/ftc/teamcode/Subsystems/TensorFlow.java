@@ -28,9 +28,7 @@ public class TensorFlow {
         if (tfod != null){
             List<Recognition> ObjectsSeen = tfod.getUpdatedRecognitions();
             if (ObjectsSeen != null && ObjectsSeen.size() >= 2){
-                if (ObjectsSeen.size() == 2){
-
-                }
+                
             }
         }
 
