@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.Subsystems.LocationStatus;
 import org.firstinspires.ftc.teamcode.Subsystems.TensorFlow;
 
 @TeleOp(name = "Tensor Flow")
+@Disabled
 
 public class TensorFlowTest extends LinearOpMode {
 
@@ -16,8 +20,15 @@ public class TensorFlowTest extends LinearOpMode {
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
 
         waitForStart();
+        TFlow.activate();
         while(opModeIsActive()){
-            telemetry.addData("Status | ", TFlow.FindBlock().toString());
+
+            LocationStatus LStat = TFlow.FindBlock();
+            telemetry.addLine().
+                    addData("Loc: ", LStat.getLoc().toString()).
+                    addData("#O: ", LStat.getNumOfObjects()).
+                    addData("B? ", LStat.isBOnScreen());
+            //telemetry.addData("Status", TFlow.FindBlock().toString());
             telemetry.update();
         }
 

@@ -6,9 +6,9 @@ public class LocationStatus {
     private boolean BOnScreen;
 
     public LocationStatus(BlockPosition Location, int NumberOfObjects, boolean BlockOnScreen) {
-        Loc = Location;
-        NumOfObjects = NumberOfObjects;
-        BOnScreen = BlockOnScreen;
+        setLoc(Location);
+        setNumOfObjects(NumberOfObjects);
+        setBOnScreen(BlockOnScreen);
     }
 
     public BlockPosition getLoc() {
@@ -27,5 +27,17 @@ public class LocationStatus {
     public String toString() {
         return "Block Pos: " + Loc.toString() + " # Objects: " + NumOfObjects +
                 " Yellow Seen: " + BOnScreen;
+    }
+
+    public void setLoc(BlockPosition loc) {
+        Loc = loc;
+    }
+
+    public void setNumOfObjects(int numOfObjects) {
+        NumOfObjects = numOfObjects;
+    }
+
+    public void setBOnScreen(boolean BOnScreen) {
+        this.BOnScreen = BOnScreen;
     }
 }

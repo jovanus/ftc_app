@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.sun.source.tree.LabeledStatementTree;
 import com.sun.tools.javac.util.ArrayUtils;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.robotcore.internal.android.dx.ssa.LocalVariableExtractor;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -24,39 +26,45 @@ public class TensorFlow {
         initVuforia();
         initTfod(tfodID);
     }
-    
-    public LocationStatus FindBlock(){
-        BlockPosition Location = BlockPosition.LEFT;
-        int NumObjectsSeen = 0;
-        boolean YellowSeen = false;
+    public void activate(){tfod.activate();}
 
+    LocationStatus LStat = new LocationStatus(BlockPosition.LEFT, 0, false);
+    public LocationStatus FindBlock(){
 
         if (tfod != null){
+            // Get new list, returns NULL if it is not new, default to saying Left
             List<Recognition> ObjectsSeen = tfod.getUpdatedRecognitions();
-            NumObjectsSeen = ObjectsSeen.size();
+            if (ObjectsSeen == null) return LStat;
+            if (ObjectsSeen.size() == 0) return new LocationStatus(BlockPosition.LEFT, 0, false);
+
+            // Prepare for new data to be parsed
+            LStat.setNumOfObjects(ObjectsSeen.size());
+            LStat.setBOnScreen(false);
+            double FLeft = ObjectsSeen.get(0).getLeft();
             int goldLocation = 0;
             int FLeftItem = 0;
-            double FLeft = ObjectsSeen.get(0).getLeft();
 
-
-            for (int i = 0; i < NumObjectsSeen; i++) {
+            for (int i = 0; i < LStat.getNumOfObjects(); i++) {
                 if(ObjectsSeen.get(i).getLabel() == LABEL_GOLD_MINERAL) {
                     goldLocation = i;
-                    YellowSeen = true;
+                    LStat.setBOnScreen(true);
                 }
                 if (ObjectsSeen.get(i).getLeft() < FLeft){
-                    FLeft = i;
-
+                    FLeftItem = i;
+                    FLeft = ObjectsSeen.get(i).getLeft();
                 }
-                NumObjectsSeen++;
             }
 
-            if (FLeft == goldLocation && YellowSeen){
-                Location = BlockPosition.CENTER;
+            if (FLeftItem == goldLocation && LStat.isBOnScreen()){
+                LStat.setLoc(BlockPosition.CENTER);
             }
+            else if (LStat.isBOnScreen()){
+                LStat.setLoc(BlockPosition.RIGHT);
+            }
+            else LStat.setLoc(BlockPosition.LEFT);
         }
 
-        return new LocationStatus(Location, NumObjectsSeen, YellowSeen);
+        return LStat;
     }
 
     public void close(){
@@ -71,7 +79,7 @@ public class TensorFlow {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
