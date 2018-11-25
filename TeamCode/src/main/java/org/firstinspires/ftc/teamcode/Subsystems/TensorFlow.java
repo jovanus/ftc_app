@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.sun.tools.javac.util.ArrayUtils;
+
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 public class TensorFlow {
@@ -20,28 +24,44 @@ public class TensorFlow {
         initVuforia();
         initTfod(tfodID);
     }
-
-    public BlockPosition FindBlock(){
+    
+    public LocationStatus FindBlock(){
         BlockPosition Location = BlockPosition.LEFT;
+        int NumObjectsSeen = 0;
+        boolean YellowSeen = false;
+
+
         if (tfod != null){
             List<Recognition> ObjectsSeen = tfod.getUpdatedRecognitions();
-            if (ObjectsSeen != null && ObjectsSeen.size() >= 2){
-                
+            NumObjectsSeen = ObjectsSeen.size();
+            int goldLocation = 0;
+            int FLeftItem = 0;
+            double FLeft = ObjectsSeen.get(0).getLeft();
+
+
+            for (int i = 0; i < NumObjectsSeen; i++) {
+                if(ObjectsSeen.get(i).getLabel() == LABEL_GOLD_MINERAL) {
+                    goldLocation = i;
+                    YellowSeen = true;
+                }
+                if (ObjectsSeen.get(i).getLeft() < FLeft){
+                    FLeft = i;
+
+                }
+                NumObjectsSeen++;
+            }
+
+            if (FLeft == goldLocation && YellowSeen){
+                Location = BlockPosition.CENTER;
             }
         }
 
-        return Location;
+        return new LocationStatus(Location, NumObjectsSeen, YellowSeen);
     }
 
-
-
-
-
-
-
-
-
-
+    public void close(){
+        tfod.shutdown();
+    }
 
 
     private void initVuforia() {
