@@ -14,9 +14,11 @@ import org.firstinspires.ftc.teamcode.Subsystems.AutomaticClaw;
 import org.firstinspires.ftc.teamcode.Subsystems.BlockPosition;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.Colors;
+import org.firstinspires.ftc.teamcode.Subsystems.DetectBats;
 import org.firstinspires.ftc.teamcode.Subsystems.ExtendArmSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.MechenumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.MineralDetector;
+import org.firstinspires.ftc.teamcode.Subsystems.TensorFlow;
 import org.firstinspires.ftc.teamcode.Subsystems.WheelieBar;
 
 public abstract class BaseAuto extends LinearOpMode {
@@ -26,7 +28,11 @@ public abstract class BaseAuto extends LinearOpMode {
     ClawSystem Claw = new ClawSystem();
     WheelieBar Wheelie = new WheelieBar();
     ExtendArmSystem Extend = new ExtendArmSystem();
-    MineralDetector MinDetector = new MineralDetector();
+    TensorFlow TFlow = new TensorFlow();
+    BlockPosition BPos = BlockPosition.LEFT;
+    DetectBats Bats = new DetectBats();
+
+
 
     protected void TurnToHeading(double Angle){
         Drive.setHeading(Angle);
@@ -89,6 +95,7 @@ public abstract class BaseAuto extends LinearOpMode {
                 hardwareMap.get(RevTouchSensor.class, "A_TILT_DOWN_T")};
         final Servo CServo[] = {hardwareMap.servo.get("C_Left"),
                 hardwareMap.servo.get("C_Right")};
+        final Servo BServos[] = {hardwareMap.servo.get("B_Left"), hardwareMap.servo.get("B_Right")};
 
         // Initializers
         Drive.initialize(init_drive,
@@ -99,9 +106,11 @@ public abstract class BaseAuto extends LinearOpMode {
         Claw.Initialize(CServo);
         Wheelie.Initialize(hardwareMap.servo.get("Wheelie"),
                 hardwareMap.get(RevTouchSensor.class,"Wheelie_Out"));
-        MinDetector.Initialize(hardwareMap.servo.get("MinSweep"),
-                hardwareMap.colorSensor.get("MinDetector"),
-                hardwareMap.get(DistanceSensor.class, "MinDetector"));
+        TFlow.Initialize(hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
+        Bats.Initialize(BServos);
+
+
     }
 
     // Thread that brings arm down
@@ -134,13 +143,11 @@ public abstract class BaseAuto extends LinearOpMode {
     protected void LandingSequence(){
         // Land
         Arm.Power(-0.75);
-        Drive.Unwind(1);
         while(Arm.GetPotVoltage() > 0.72){
             telemetry.addData("Arm Pos", Arm.GetPotVoltage());
             telemetry.update();
         }
         Arm.Power(0);
-        Drive.Unwind(0);
 
         // Extend Arm
 
@@ -154,58 +161,6 @@ public abstract class BaseAuto extends LinearOpMode {
         b.start();
         sleep(250);
         while(a.isAlive() || b.isAlive());
-    }
-
-
-    public boolean SweepArea(double Begin, double End, int Jumps){
-        double startTime = getRuntime();
-        double spaceBetweenJumps = (End - Begin)/Jumps;
-        MinDetector.GoToPos(Begin);
-        sleep(750);
-        for (int i = 0; i < Jumps; i++) {
-            MinDetector.GoToPos(Begin + i * spaceBetweenJumps);
-            sleep(30);
-            if (MinDetector.determineColor() == Colors.YELLOW) return true;
-            else if (MinDetector.determineColor() == Colors.WHITE) break;
-        }
-        return false;
-    }
-
-    public BlockPosition DetectBlock(){
-        BlockPosition BPos = BlockPosition.LEFT;
-        if (SweepArea(0.45, 0.3, 15)) BPos = BlockPosition.RIGHT;
-        else if (SweepArea(0.19, 0.1, 15)) BPos = BlockPosition.CENTER;
-        telemetry.addData("Block: ", BPos.toString());
-        telemetry.update();
-        return BPos;
-    }
-
-    public void DriveToBlock(BlockPosition BPos){
-        switch (BPos){
-            case LEFT:
-                MinDetector.GoToPos(1);
-                TurnToHeading(35);
-                break;
-            case CENTER:
-                MinDetector.GoToPos(1);
-                break;
-            case RIGHT:
-                MinDetector.GoToPos(1);
-                TurnToHeading(-35);
-                break;
-        }
-        Drive.EncPID.Reset();
-        DrivetoPosition(28);
-        switch (BPos){
-            case LEFT:
-                TurnToHeading(-35);
-                break;
-            case CENTER:
-                break;
-            case RIGHT:
-                TurnToHeading(35);
-                break;
-        }
     }
 
     @Override

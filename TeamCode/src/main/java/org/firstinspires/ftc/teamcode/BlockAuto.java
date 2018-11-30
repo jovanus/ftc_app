@@ -9,14 +9,52 @@ import org.firstinspires.ftc.teamcode.Subsystems.BlockPosition;
 public class BlockAuto extends BaseAuto {
 
 
+    // Drops the Team Marker in the Zone
+    Thread c = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            Arm.Power(1.0);
+            while(Arm.GetPotVoltage() < 1.9) idle();
+            Arm.Power(0);
+            Claw.SimpleOpenClose(true, false,false,false);
+        }
+    });
+
+    // Once In position, hit the blocks
+    Thread d = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            final int sleeptime = 250;
+            switch (BPos){
+                case LEFT:
+                    Bats.LeftBat(true);
+                    sleep(sleeptime);
+                    Bats.LeftBat(false);
+                    break;
+                case CENTER:
+                    Drive.EncPID.Reset();
+                    DrivetoPosition(5.5);
+                    DrivetoPosition(0);
+                    break;
+                case RIGHT:
+                    Bats.RightBat(true);
+                    sleep(sleeptime);
+                    Bats.RightBat(false);
+                    break;
+            }
+        }
+    });
+
     @Override
     public void runOpMode() throws InterruptedException {
         Initialize();
         Claw.SimpleOpenClose(false, true, false,false);
 
+        TFlow.activate();
         waitForStart();
         Drive.EnableSensors();
 
+        BPos = TFlow.FindBlock().getLoc();
 
         LandingSequence();
 
@@ -25,36 +63,12 @@ public class BlockAuto extends BaseAuto {
         sleep(50);
         DrivetoPosition(5.5);
 
-        DriveToBlock(DetectBlock());
 
+        c.start();
+        d.start();
 
-        Drive.EncPID.Reset();
-        DrivetoPosition(9);
+        while (c.isAlive() || d.isAlive()) idle();
 
-        Arm.Power(1.0);
-        while(Arm.GetPotVoltage() < 1.9){
-            telemetry.addData("Arm Pos", Arm.GetPotVoltage());
-            telemetry.update();
-        }
-        Arm.Power(0);
-
-        /*
-        Extend.Power(1);
-        sleep(1300);
-        Extend.Power(0);
-        */
-
-        Claw.SimpleOpenClose(true, false,false,false);
-        Drive.Drive(1.0,0,0);
-        sleep(600);
-        Drive.Stop();
-
-
-
-
-        Extend.Power(-1);
-        while (!Extend.TouchStatus()[1]);
-        Extend.Power(0);
 
         Drive.DisableSensors();
 
