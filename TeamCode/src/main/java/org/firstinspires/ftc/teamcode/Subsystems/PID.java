@@ -74,6 +74,7 @@ public abstract class PID {
         curDError = 0;
         lastError = 0;
         resetInput();
+        if (T.isAlive()) error();
     }
 
     /**************************************
@@ -98,6 +99,7 @@ public abstract class PID {
 
     public void setSetPoint(double setPoint) {
         this.setPoint = setPoint;
+        this.error();
     }
 
     public void setInvertOutput(boolean invertOutput) {
@@ -118,6 +120,7 @@ public abstract class PID {
     /**************************************
      * Error Calculation - Don't do extraneous calculations if required.
      */
+
 
     private void error(){
         error = setPoint - getInput();

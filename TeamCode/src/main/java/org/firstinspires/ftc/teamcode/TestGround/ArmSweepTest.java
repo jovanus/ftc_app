@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Colors;
 import org.firstinspires.ftc.teamcode.Subsystems.MineralDetector;
 
 @TeleOp(name = "TestArm")
-//@Disabled
+@Disabled
 
 public class ArmSweepTest extends LinearOpMode {
     MineralDetector MinDetector = new MineralDetector();

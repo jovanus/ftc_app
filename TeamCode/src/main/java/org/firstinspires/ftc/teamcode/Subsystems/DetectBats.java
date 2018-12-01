@@ -10,12 +10,26 @@ public class DetectBats {
         Bats[1].setDirection(Servo.Direction.REVERSE);
     }
 
-    private final static double IN = 0.0f, OUT = 0.75f;
+    private final static double IN = 0.95f, OUT = 0.0f;
+    public double SetLeft(double Pos){
+        Bats[0].setPosition(Pos);
+        return Pos;
+    }
     public void LeftBat(boolean Activate){
-        Bats[0].setPosition(Activate ? OUT : IN);
+        SetLeft(Activate ? OUT : IN);
     }
 
-    public void RightBat(boolean Activate){
-        Bats[1].setPosition(Activate ? OUT : IN);
+    public double SetRight(double Pos){
+        Bats[1].setPosition(Pos);
+        return Pos;
     }
+    public void RightBat(boolean Activate){
+        SetRight(Activate ? OUT : IN);
+    }
+
+    public void Bat(boolean Left, boolean Right){
+        LeftBat(Left);
+        RightBat(Right);
+    }
+
 }

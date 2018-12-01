@@ -7,11 +7,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.Subsystems.ArmSystem;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawSystem;
-import org.firstinspires.ftc.teamcode.Subsystems.ExtendArmSystem;
-import org.firstinspires.ftc.teamcode.Subsystems.MechenumDrive;
-import org.firstinspires.ftc.teamcode.Subsystems.WheelieBar;
+import org.firstinspires.ftc.teamcode.Subsystems.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
 
@@ -22,6 +18,7 @@ public class Teleop extends LinearOpMode {
     ClawSystem Claw = new ClawSystem();
     WheelieBar Wheelie = new WheelieBar();
     ExtendArmSystem Extend = new ExtendArmSystem();
+    DetectBats Bats = new DetectBats();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -39,10 +36,14 @@ public class Teleop extends LinearOpMode {
             Claw.SimpleOpenClose(gamepad2.y, gamepad2.a, gamepad2.x, gamepad2.b);
             Wheelie.ActuateBar(gamepad1.right_bumper, gamepad1.left_bumper);
 
+
             //if (gamepad1.a) Drive.Wind(-1);
 
             if (gamepad1.a) Drive.SetMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             else if (gamepad1.b) Drive.SetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            Bats.LeftBat(false);
+            Bats.RightBat(false);
 
             telemetry.addData("Arm Angle", Arm.GetPotVoltage());
 
@@ -87,12 +88,14 @@ public class Teleop extends LinearOpMode {
         */
         final Servo CServo[] = {hardwareMap.servo.get("C_Left"),
                 hardwareMap.servo.get("C_Right")};
+        final Servo BServos[] = {hardwareMap.servo.get("B_Left"), hardwareMap.servo.get("B_Right")};
+
 
         Drive.Initialize(init_drive);
         Arm.Initialize(init_Arm, init_Arm_Touch, hardwareMap.analogInput.get("Arm_P"));
         Extend.Initialize(init_Extend, init_Extend_Touch);
         Claw.Initialize(CServo);
         Wheelie.Initialize(hardwareMap.servo.get("Wheelie"), hardwareMap.get(RevTouchSensor.class,"Wheelie_Out"));
-
+        Bats.Initialize(BServos);
     }
 }

@@ -35,7 +35,7 @@ public abstract class BaseAuto extends LinearOpMode {
 
 
     protected void TurnToHeading(double Angle){
-        Drive.setHeading(Angle);
+        Drive.GyroPID.setSetPoint(Angle);
         sleep(30);
         telemetry.addLine()
                 .addData("Run: ", Drive.isHeadingInTolerance())
@@ -56,9 +56,13 @@ public abstract class BaseAuto extends LinearOpMode {
     }
 
     protected void DrivetoPosition(double Position){
-        Drive.setPosition(Position);
+        Drive.EncPID.setSetPoint(Position);
+        telemetry.addLine()
+                .addData("Run: ", Drive.isPositionInTolerance())
+                .addData("Error :", Drive.PositionError())
+                .addData("Output :", Drive.EncPID.getOutput());
+        telemetry.update();
 
-        sleep(50);
         while (!Drive.isPositionInTolerance() && opModeIsActive()){
             telemetry.addLine()
                     .addData("Run: ", Drive.isPositionInTolerance())
@@ -119,7 +123,7 @@ public abstract class BaseAuto extends LinearOpMode {
         public void run() {
             // Move Arm Forward
             Arm.Power(0.3);
-            while(Arm.GetPotVoltage() < 1.1){
+            while(Arm.GetPotVoltage() < DROP_TO_RIDE){
                 telemetry.addData("Arm Pos", Arm.GetPotVoltage());
                 telemetry.update();
                 idle();
@@ -135,15 +139,16 @@ public abstract class BaseAuto extends LinearOpMode {
             Extend.Power(-1);
             while (!Extend.TouchStatus()[1]);
             Extend.Power(0);
-            idle();
         }
     });
 
 
+    final double LANDING_LEVEL = 0.6,
+    DROP_TO_RIDE = 1.0;
     protected void LandingSequence(){
         // Land
         Arm.Power(-0.75);
-        while(Arm.GetPotVoltage() > 0.72){
+        while(Arm.GetPotVoltage() > LANDING_LEVEL){
             telemetry.addData("Arm Pos", Arm.GetPotVoltage());
             telemetry.update();
         }
@@ -158,9 +163,8 @@ public abstract class BaseAuto extends LinearOpMode {
         Arm.Power(0);
 
         a.start();
-        b.start();
         sleep(250);
-        while(a.isAlive() || b.isAlive());
+        while(a.isAlive());
     }
 
     @Override

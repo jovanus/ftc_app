@@ -56,10 +56,10 @@ public class TensorFlow {
             }
 
             if (FLeftItem == goldLocation && LStat.isBOnScreen()){
-                LStat.setLoc(BlockPosition.CENTER);
+                LStat.setLoc(BlockPosition.LEFT);
             }
             else if (LStat.isBOnScreen()){
-                LStat.setLoc(BlockPosition.RIGHT);
+                LStat.setLoc(BlockPosition.CENTER);
             }
             else LStat.setLoc(BlockPosition.LEFT);
         }
@@ -79,7 +79,7 @@ public class TensorFlow {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
