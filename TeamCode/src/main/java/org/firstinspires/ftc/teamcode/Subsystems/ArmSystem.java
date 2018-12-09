@@ -40,4 +40,7 @@ public class ArmSystem {
     }
 
 
+    public void Stop() {
+        Power(0);
+    }
 }

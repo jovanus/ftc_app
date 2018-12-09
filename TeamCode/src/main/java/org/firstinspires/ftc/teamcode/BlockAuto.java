@@ -2,36 +2,28 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.Subsystems.BlockPosition;
-
 @Autonomous(name = "White/Yellow Mode")
 
 public class BlockAuto extends BaseAuto {
 
-    Thread f = new Thread(new Runnable(){
-        @Override
-        public void run() {
-            Extend.Power(1.0);
-            sleep(600);
-            Extend.Power(0);
-        }
-    });
 
     // Drops the Team Marker in the Zone
-    Thread c = new Thread(new Runnable() {
+    Thread MarkerDrop = new Thread(new Runnable() {
         @Override
         public void run() {
-            Arm.Power(.75);
-            while(Arm.GetPotVoltage() < 1.75) idle();
-            Arm.Power(0);
+//            Arm.Power(.75);
+//            while(Arm.GetPotVoltage() < 1.75) idle();
+//            Arm.Power(0);
+            GoToArmPosition(1.75, 0.75);
+            while (IsArmThreadRunning());
             Claw.SimpleOpenClose(true, false,false,false);
-            b.start();
-            e.start();
+            RetractToLimit.start();
+            GoToArmPosition(1.55, 1);
         }
     });
 
     // Once In position, hit the blocks
-    Thread d = new Thread(new Runnable() {
+    Thread SampleMinerals = new Thread(new Runnable() {
         @Override
         public void run() {
             final int sleeptime = 500;
@@ -57,14 +49,16 @@ public class BlockAuto extends BaseAuto {
         }
     });
 
-    Thread e = new Thread(new Runnable() {
+    Thread f = new Thread(new Runnable(){
         @Override
         public void run() {
-            Arm.Power(-1.0);
-            while(Arm.GetPotVoltage() > 1.55) idle();
-            Arm.Power(0);
+            ExtendForTime(600, false);
+//            Extend.Power(1.0);
+//            sleep(600);
+//            Extend.Power(0);
         }
     });
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -94,23 +88,22 @@ public class BlockAuto extends BaseAuto {
         while (f.isAlive()) idle();
 
 
-        c.start();
-        d.start();
+        MarkerDrop.start();
+        SampleMinerals.start();
 
-        while (c.isAlive() || d.isAlive()) idle();
+        while (MarkerDrop.isAlive() || SampleMinerals.isAlive()) idle();
 
         TurnToHeading(70);
         Drive.EncPID.Reset();
         DrivetoPosition(30);
         TurnToHeading(125);
-        Drive.EncPID.Reset();
-        DrivetoPosition(30);
-
-        Extend.Power(1);
-        while (!Extend.TouchStatus()[0] && opModeIsActive());
-        Extend.Power(0);
+//        Drive.EncPID.Reset();
+//        DrivetoPosition(30);
 
 
+        ExtendToLimit.run(); // Want to enter Crater Further Back
+        GoToArmPosition(1.75, 0.5);
+        while (ExtendToLimit.isAlive() || IsArmThreadRunning())
         Drive.DisableSensors();
 
         while (opModeIsActive());

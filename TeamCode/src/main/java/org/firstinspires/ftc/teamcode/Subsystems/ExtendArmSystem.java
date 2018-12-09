@@ -32,4 +32,7 @@ public class ExtendArmSystem {
         return ExtendLims;
     }
 
+    public void Stop() {
+        Power(0);
+    }
 }
