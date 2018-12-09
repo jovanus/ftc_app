@@ -10,7 +10,10 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.internal.android.dx.ssa.LocalVariableExtractor;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class TensorFlow {
@@ -26,6 +29,7 @@ public class TensorFlow {
         initVuforia();
         initTfod(tfodID);
     }
+
     public void activate(){tfod.activate();}
 
     LocationStatus LStat = new LocationStatus(BlockPosition.LEFT, 0, false);
@@ -37,18 +41,31 @@ public class TensorFlow {
             if (ObjectsSeen == null) return LStat;
             if (ObjectsSeen.size() == 0) return new LocationStatus(BlockPosition.LEFT, 0, false);
 
+            Collections.sort(ObjectsSeen, new Comparator<Recognition>() {
+                @Override
+                public int compare(Recognition recognition, Recognition t1) {
+                    return (int)((recognition.getLeft() - t1.getLeft()) * 100);
+                }
+            });
             // Prepare for new data to be parsed
             LStat.setNumOfObjects(ObjectsSeen.size());
             LStat.setBOnScreen(false);
             double FLeft = ObjectsSeen.get(0).getLeft();
+            double FRight = ObjectsSeen.get(0).getLeft();
             int goldLocation = 0;
             int FLeftItem = 0;
+            int FRightItem = 0;
 
             for (int i = 0; i < LStat.getNumOfObjects(); i++) {
                 if(ObjectsSeen.get(i).getLabel() == LABEL_GOLD_MINERAL) {
                     goldLocation = i;
                     LStat.setBOnScreen(true);
                 }
+                if (ObjectsSeen.get(i).getLeft() > FRight){
+                    FRightItem = i;
+                    FRight = ObjectsSeen.get(i).getLeft();
+                }
+
                 if (ObjectsSeen.get(i).getLeft() < FLeft){
                     FLeftItem = i;
                     FLeft = ObjectsSeen.get(i).getLeft();
@@ -58,14 +75,40 @@ public class TensorFlow {
             if (FLeftItem == goldLocation && LStat.isBOnScreen()){
                 LStat.setLoc(BlockPosition.LEFT);
             }
-            else if (LStat.isBOnScreen()){
-                LStat.setLoc(BlockPosition.CENTER);
+            else if (FRightItem == goldLocation && LStat.isBOnScreen()){
+                LStat.setLoc(BlockPosition.RIGHT);
             }
-            else LStat.setLoc(BlockPosition.LEFT);
+            else LStat.setLoc(BlockPosition.CENTER);
         }
 
         return LStat;
     }
+
+    public String[] ListNames(){
+        String[] LName = new String[5];
+        List<Recognition> ObjectsSeen = tfod.getRecognitions();
+        if (ObjectsSeen == null) return LName;
+
+        Collections.sort(ObjectsSeen, new Comparator<Recognition>() {
+            @Override
+            public int compare(Recognition recognition, Recognition t1) {
+                return (int)((recognition.getLeft() - t1.getLeft()) * 100);
+            }
+        });
+
+            for (int i = 0; i < Math.min(ObjectsSeen.size(), LName.length); i++) {
+                try {
+                    LName[i] = ObjectsSeen.get(i).getLabel();
+                } catch (ArrayIndexOutOfBoundsException e){
+                    LName[i] = null;
+                }
+            }
+
+        return LName;
+    }
+
+
+
 
     public void close(){
         tfod.shutdown();
