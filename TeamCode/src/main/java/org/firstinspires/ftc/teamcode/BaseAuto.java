@@ -158,11 +158,11 @@ public abstract class BaseAuto extends LinearOpMode {
     }
 
     // Arm deflection setup then run
-    double ArmSetPower = 0;
-    double targetVoltage = 0;
+    private double ArmSetPower = 0;
+    private double targetVoltage = 0;
     boolean isArmAboveTarget = false;
     public void GoToArmPosition(double targetVoltage, double Power){
-        isArmAboveTarget = targetVoltage < Arm.GetPotVoltage();
+        isArmAboveTarget = targetVoltage > Arm.GetPotVoltage();
         ArmSetPower = (isArmAboveTarget ? 1 : -1) * Math.abs(Power);
         this.targetVoltage = targetVoltage;
         DeflectArm.run();
@@ -182,35 +182,57 @@ public abstract class BaseAuto extends LinearOpMode {
         }
     });
 
+    Thread MarkerDrop = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            GoToArmPosition(1.75, 0.75);
+            while (IsArmThreadRunning());
+            Claw.SimpleOpenClose(true, false,false,false);
+            RetractToLimit.start();
+            GoToArmPosition(1.55, 1);
+        }
+    });
+
+    // Once In position, hit the blocks
+    Thread SampleMinerals = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            final int sleeptime = 500;
+            switch (BPos){
+                case LEFT:
+                    Bats.Bat(true, false);
+                    sleep(sleeptime);
+                    Bats.Bat(false, false);
+                    break;
+                case CENTER:
+//                    Bats.Bat(false, false);
+//                    Drive.EncPID.Reset();
+//                    DrivetoPosition(14);
+//                    Drive.EncPID.Reset();
+//                    DrivetoPosition(-14);
+                    break;
+                case RIGHT:
+                    Bats.Bat(false, true);
+                    sleep(sleeptime);
+                    Bats.Bat(false, false);
+                    break;
+            }
+        }
+    });
+
 
 
     final double LANDING_LEVEL = 0.6,
     DROP_TO_RIDE = 1.0;
     protected void LandingSequence(){
         // Land
-//        Arm.Power(-0.75);
-//        while(Arm.GetPotVoltage() > LANDING_LEVEL){
-//            telemetry.addData("Arm Pos", Arm.GetPotVoltage());
-//            telemetry.update();
-//        }
-//        Arm.Power(0);
         GoToArmPosition(LANDING_LEVEL, 0.75);
         while(IsArmThreadRunning());
 
         // Extend Arm
-
         ExtendForTime(2250, true);
-//        Extend.Power(1);
-//        Arm.Power(0.2);
-//        sleep(2250);
-//        Extend.Power(0);
-//        Arm.Power(0);
-
-        GoToArmPosition(DROP_TO_RIDE, 0.3);
+        GoToArmPosition(DROP_TO_RIDE, 0.4);
         while(IsArmThreadRunning());
-//        a.start();
-//        sleep(250);
-//        while(a.isAlive());
     }
 
     @Override

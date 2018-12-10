@@ -11,6 +11,7 @@ public class ArmSystem {
     DcMotor Arm[];
     RevTouchSensor LimitsArm[];
     AnalogInput Potentiometer;
+    double ResetValue = 0;
 
     public void Initialize(DcMotor ArmMotors[], RevTouchSensor ArmLimits[], AnalogInput Pot){
         Arm = ArmMotors;
@@ -29,7 +30,11 @@ public class ArmSystem {
     }
 
     public double GetPotVoltage(){
-        return Potentiometer.getVoltage();
+        return Math.abs(Potentiometer.getVoltage() - ResetValue);
+    }
+
+    public void ResetSensor(){
+        ResetValue = Potentiometer.getVoltage();
     }
 
     public boolean[] TouchStatus(){

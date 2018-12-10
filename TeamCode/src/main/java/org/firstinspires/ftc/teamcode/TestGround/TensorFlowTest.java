@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.LocationStatus;
 import org.firstinspires.ftc.teamcode.Subsystems.TensorFlow;
 
 @TeleOp(name = "Tensor Flow")
-//@Disabled
+@Disabled
 
 public class TensorFlowTest extends LinearOpMode {
 
