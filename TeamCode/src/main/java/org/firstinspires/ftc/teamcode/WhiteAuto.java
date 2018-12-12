@@ -43,43 +43,43 @@ public class WhiteAuto extends BaseAuto {
         LandingSequence();
 
         // Prepare for initial scoring sequence
-        f.start();
+        //f.start();
         Drive.EncPID.Reset();
         Drive.GyroPID.Reset();
         sleep(50);
-        DrivetoPosition(7.0);
-        while (f.isAlive()) idle();
+        DrivetoPosition(9.0);
+        //while (f.isAlive()) idle();
 
         // Do scoring Actions
         SampleMinerals.start();
         while (SampleMinerals.isAlive()) idle();
-        TurnToHeading(70);
+        TurnToHeading(75);
         if (BPos == BlockPosition.CENTER){
             Bats.SetRight(0.5);
             sleep(500);
             Bats.RightBat(false);
         }
 
-        // Get to and square to wall
+        // Get to wall
         Drive.EncPID.Reset();
         DrivetoPosition(30);
-        TurnToHeading(125);
-        Drive.Drive(0, 1.0, 0);
-        sleep(2000);
-        Drive.Stop();
-        Drive.EncPID.Reset();
+        TurnToHeading(130);
 
         // Drop Marker
         ExtendToLimit.start();
-        GoToArmPosition(1.75, 0.5);
+        GoToArmPosition(1.7, 0.3);
         while (ExtendToLimit.isAlive() || IsArmThreadRunning());
         Claw.SimpleOpenClose(true, false,false,false);
-        Drive.Drive(-1.0, 0, 0);
-        sleep(500);
+        Drive.EncPID.Reset();
+        DrivetoPosition(8);
+        RetractToLimit.start();
+        GoToArmPosition( 1.3, 0.6);
+        while (RetractToLimit.isAlive() || IsArmThreadRunning());
 
         // Drive to Crater
+        TurnToHeading(155);
         Drive.Drive(1.0,0,0);
-        sleep(2000);
+        sleep(1500);
         Drive.Stop();
         Drive.DisableSensors();
 

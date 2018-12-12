@@ -37,13 +37,13 @@ public class BlockAuto extends BaseAuto {
 
         // Land
         LandingSequence();
-        f.start();
+        //f.start();
 
         // Prepare to Score
         Drive.EncPID.Reset();
         Drive.GyroPID.Reset();
         sleep(50);
-        DrivetoPosition(7.0);
+        DrivetoPosition(8.0);
         while (f.isAlive()) idle();
 
 
@@ -51,7 +51,7 @@ public class BlockAuto extends BaseAuto {
         MarkerDrop.start();
         SampleMinerals.start();
         while (MarkerDrop.isAlive() || SampleMinerals.isAlive()) idle();
-        TurnToHeading(70);
+        TurnToHeading(75);
         if (BPos == BlockPosition.CENTER){
             Bats.SetRight(0.5);
             sleep(500);
@@ -64,9 +64,10 @@ public class BlockAuto extends BaseAuto {
         TurnToHeading(125);
 
         //Prepare to pick up Blocks
-        ExtendToLimit.run(); // Want to enter Crater Further Back
-        GoToArmPosition(1.75, 0.5);
-        while (ExtendToLimit.isAlive() || IsArmThreadRunning());
+        ExtendToLimit.start(); // Want to enter Crater Further Back
+        while (ExtendToLimit.isAlive());
+        GoToArmPosition(1.75, 0.2);
+        while(IsArmThreadRunning());
 
         // Close Shop
         Drive.DisableSensors();

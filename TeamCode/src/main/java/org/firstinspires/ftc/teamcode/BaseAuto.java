@@ -176,8 +176,8 @@ public abstract class BaseAuto extends LinearOpMode {
         @Override
         public void run() {
             Arm.Power(ArmSetPower);
-            if (isArmAboveTarget) while (Arm.GetPotVoltage() < targetVoltage);
-            else while (Arm.GetPotVoltage() > targetVoltage);
+            if (isArmAboveTarget) while (Arm.GetPotVoltage() < targetVoltage && opModeIsActive());
+            else while (Arm.GetPotVoltage() > targetVoltage && opModeIsActive());
             Arm.Stop();
         }
     });
@@ -185,11 +185,12 @@ public abstract class BaseAuto extends LinearOpMode {
     Thread MarkerDrop = new Thread(new Runnable() {
         @Override
         public void run() {
+            //ExtendToLimit.start();
             GoToArmPosition(1.75, 0.75);
-            while (IsArmThreadRunning());
+            while (IsArmThreadRunning() || ExtendToLimit.isAlive() && opModeIsActive());
             Claw.SimpleOpenClose(true, false,false,false);
             RetractToLimit.start();
-            GoToArmPosition(1.55, 1);
+            GoToArmPosition(1.3, 1);
         }
     });
 
@@ -197,7 +198,7 @@ public abstract class BaseAuto extends LinearOpMode {
     Thread SampleMinerals = new Thread(new Runnable() {
         @Override
         public void run() {
-            final int sleeptime = 500;
+            final int sleeptime = 800;
             switch (BPos){
                 case LEFT:
                     Bats.Bat(true, false);
